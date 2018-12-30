@@ -12,14 +12,14 @@
 //to when as a Werewolf is to kill all of the villagers before the villagers kill all the Werewolfs.
 //to win as a villager, you have to kill all of the Werewolfs, before they kill all of the villagers.
 const Discord = require('discord.js');
-let playing = require(`C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json files/player.json`);
+let playing = require(`C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json_files/player.json`);
 module.exports.run = async(bot, message, args) => {
   if(!playing[message.author.id]){
     playing[message.author.id] ={
       playing: message.author.username
     };
   }
-  fs.writeFile("C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json files/player.json", JSON.stringify(playing), (err) =>{
+  fs.writeFile("C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json_files/player.json", JSON.stringify(playing), (err) =>{
     if(err) console.log(err);
   })
 }

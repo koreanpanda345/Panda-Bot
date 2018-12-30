@@ -12,7 +12,7 @@ const YouTube = require('simple-youtube-api');
 const iheart = require('iheart');
 const superagent = require("superagent");
 const send = require("quick.hook");
-const youtube = new YouTube('AIzaSyBCIK1r0YuHUJD3905yNBF8FQlQlYgfxAo');
+const youtube = new YouTube(botconfig.yt_api_key);
 const Evaluator = require("poker-evaluator");
 const queue = new Map();
 //AIzaSyBCIK1r0YuHUJD3905yNBF8FQlQlYgfxAo
@@ -223,9 +223,9 @@ function isTurn(user) {
 
 
 //coin.json
-//let coins = require("C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json files/coins.json");
+//let coins = require("C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json_files/coins.json");
 //ttt player list
-//let playing = require('C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json files/player.json');
+//let playing = require('C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json_files/player.json');
 
 //this is where the commands that can't be in a separate files are.
 bot.on("message", async message =>{
@@ -839,13 +839,13 @@ bot.on("message", async message =>{
      if(!message.member.hasPermission("MANAGE_SERVER")) return message.reply("No can do!");
      if(!args[0] || args[0 == "help"]) return message.reply(`Usage: ${prefixes}setprefix <desired prefix here>`);
 
-     let prefixes = JSON.parse(fs.readFileSync("C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json files/prefix.json", "utf8"));
+     let prefixes = JSON.parse(fs.readFileSync("C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json_files/prefix.json", "utf8"));
 
      prefixes[message.guild.id] = {
        prefixes: args[0]
      };
 
-     fs.writeFile("C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json files/prefix.json", JSON.stringify(prefixes), (err) => {
+     fs.writeFile("C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json_files/prefix.json", JSON.stringify(prefixes), (err) => {
        if(err) console.log(err)
      });
      let sEmbed = new Discord.RichEmbed()
