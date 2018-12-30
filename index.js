@@ -1034,7 +1034,7 @@ if(cmd === `${prefix}p` || cmd === `${prefix}play`){
 else if (cmd === `${prefix}remove` || cmd === `${prefix}r`){
   let removeInfo = new Discord.RichEmbed()
   .setTitle(`~INVALID USAGE~`)
-  .addField(`Correct Formatting`, `*${prefix}remove <Song Queuing number* or *${prefix}r <Song Queuing number`)
+  .addField(`Correct Formatting`, `*${prefix}remove <Song Queuing number>* or *${prefix}r <Song Queuing number>*`)
   .addField(`Example`, `*${prefix}remove 3* or *${prefix}r 3*`);
   if(!args[0])return message.channel.send(removeInfo);
       let index = 0;
