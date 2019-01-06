@@ -49,69 +49,84 @@ fs.readdir("./commands/", (err, files) => {
 });
 //when it runs and it was successful, it will run this
 bot.on("ready", async () =>{
-  console.log(`|-------------------------------------------|`);
-  let prefix = botconfig.prefix;
-//--------------------------
-//let newCommands = true;
-let newCommands = false;
-  console.log(`|         New Commands: ${newCommands}               `);
-  console.log(`|-------------------------------------------|`);
-//--------------------------
-  //let being_work_on = true;
-  let being_work_on = false;
-  console.log(`|         Being work on: ${being_work_on}             `);
-  console.log(`|-------------------------------------------|`);
-//-------------------------
-  //let adding = true;
-  let adding = false;
-  let being_added = "";
-  let section = "";
-  console.log(`|         Adding Commands: ${adding}            `);
-  console.log(`|         Being added: ${being_added}                     `);
-  console.log(`|         Section: ${section}                         `);
-  console.log(`|-------------------------------------------|`);
-//--------------------------
-//let newCommand = true;
-let newCommand = false;
-  console.log(`|         newCommand: ${newCommand}`);
-  console.log(`|         Just Added: ${being_added}`);
-  console.log(`|         Section: ${section}`);
-  console.log(`|-------------------------------------------|`)
-//-------------------------
-  //let update = true;
-  let update = false;
-  let updated = "";
-  let updatedCommand = "";
-  console.log(`|         Updated: ${update}                     `);
-  console.log(`|         Update in: ${updated}                  `);
-  console.log(`|         Updated Command: ${prefix}${updatedCommand}      `);
-  console.log(`|-------------------------------------------|`)
-//-------------------------
+    let prefix = botconfig.prefix;
+    let status = "";
+    let command = "";
+    let functions = "";
+    
+    if(status === "update"){
+        console.log(`|-------------------------------------------|`);
+        if(command === ""){
+            console.log(`|Function: ${functions}`);
+            console.log(`|-------------------------------------------|`);
+            bot.user.setActivity(`Panda Bot has gotten a update. The update is ${functions}.`);
+            bot.user.setStatus('online');
+        }
+        else if(functions === ""){
+            console.log(`|Command: ${command}`);
+            console.log(`|-------------------------------------------|`);
+            bot.user.setActivity(`Panda Bot has gotten a update. The update is ${prefix}${commands}`);
+            bot.user.setStatus("online");
+        }
+        else if(functions === "" && command === ""){
+            console.log("|");
+            console.log(`|-------------------------------------------|`);
+            bot.user.setActivity(`Panda Bot has gotten a update.`);
+            bot.user.setStatus("online");
+        }
+        else{
+            console.log(`|Command: ${command}`);
+            console.log(`|Function: ${functions}`);
+            console.log(`|-------------------------------------------|`);
+            bot.user.setActivity(`Panda Bot has gotten a update. The update is ${prefix}${commands}, and ${functions}`);
+            bot.user.setStatus("online");
+        }
+    }
+    else if(status === "updating"){
+        console.log(`|-------------------------------------------|`);
+        console.log(`Being worked on: True`);
+        console.log(`|-------------------------------------------|`);
+        bot.user.setActivity(`Panda Bot is being worked on. please wait till you don't see this message.`);
+        bot.user.setStatus("dnd");
+    }
+    else if(status === "Fixing"){
+        console.log(`|-------------------------------------------|`);
+        console.log(`Being worked on: True`);
+        console.log(`|-------------------------------------------|`);
+        bot.user.setActivity(`Panda Bot is being worked on. please wait till you don't see this message.`);
+        bot.user.setStatus("dnd");
+    }
+    else if(status === "new"){
+        console.log(`|-------------------------------------------|`);
+        if(command === ""){
+            console.log(`|Function: ${functions}`);
+            console.log(`|-------------------------------------------|`);
+            bot.user.setActivity(`Panda Bot has gotten a new Function. Which is ${functions}.`);
+            bot.user.setStatus('online');
+        }
+        else if(functions === ""){
+            console.log(`|Command: ${command}`);
+            console.log(`|-------------------------------------------|`);
+            bot.user.setActivity(`Panda Bot has gotten a new command. The new command is ${prefix}${commands}`);
+            bot.user.setStatus("online");
+        }
+        else{
+            console.log(`|Command: ${command}`);
+            console.log(`|Function: ${functions}`);
+            console.log(`|-------------------------------------------|`);
+            bot.user.setActivity(`Panda Bot has gotten a new command. The new command is ${prefix}${commands}, and a new function which is ${functions}`);
+            bot.user.setStatus("online");
+    }
 
-    if(update === true){
-      console.log(`status has been set to "Update on ${updated}, check commands ${prefix}${updatedCommand}"`);
-      bot.user.setActivity(`Update on ${updated}, check command ${prefix}${updatedCommand}`);//updated commands stats
-  } else if(adding === true){
-    console.log(`status has been set to "panda bot is getting a new command: ${prefix}${being_added} to ${section}. Please wait, till you do not see this status.thank you."`);
-    bot.user.setActivity(`panda bot is getting a new command: ${prefix}${being_added} to ${section}. Please wait, till you do not see this status.thank you.`, {type: `WATCHING`});
-    bot.user.setStatus("dnd");
-  }else if(being_work_on === true){
-    console.log(`status has been set to "panda bot is being worked on, please wait, till you don't not see this status. thank you"`);
-    bot.user.setActivity(`panda bot is being worked on, please wait, till you don't not see this status. thank you`, {type: `WATCHING`});//being worked on status
-    bot.user.setStatus("dnd");
-  }else if(newCommand === true){
-    console.log(`status has been set to "Panda Bot has New Commands. check out ${section} in the help command and try out ${prefix}${being_added}!!!"`);
-    bot.user.setActivity(`Panda Bot has New Commands. check out ${section} in the help command and try out ${prefix}${being_added}!!!`, {type: `WATCHING`});
-  }
-  else if(newCommands === true){
-    console.log(`status has been set to "New Commands check ${prefix}!help to see them."`);
-    bot.user.setActivity(`New Commands check panda!help to see them.`, {type: `WATCHING`});//new commands stats
-  }
-  else{
-    console.log(`status has been set to "${prefix}help"`);
-    bot.user.setActivity(`panda!help`, {type: `WATCHING`});//standard stats
-  }
-  console.log(`Panda Bot has started, with ${bot.users.size} users, in ${bot.channels.size} channels of ${bot.guilds.size} guilds`);
+    }
+    else{
+        console.log(`|-------------------------------------------|`);
+        console.log(`|default`);
+        console.log(`|-------------------------------------------|`);
+        bot.user.setActivity(`panda!help`);
+        bot.user.setStatus("online");
+    }
+    console.log(`Panda bot is in ${bot.guilds.size} servers, ${bot.channels.size} channels, and ${bot.users.size} users.`);
 });
 /*=================
 [Importing Modules]
@@ -1013,7 +1028,7 @@ if(cmd === `${prefix}p` || cmd === `${prefix}play`){
   .setTitle(`Volume`)
   .setAuthor(message.author.username)
   .addField('Current Volume', ` **${serverQueue.volume}**`)
-  .addField('To Change The Volume', `*${prefix}vol [1-5]* or *${prefix}volume [1-5]`)
+  .addField('To Change The Volume', `*${prefix}vol [1-5]* or *${prefix}volume [1-5]*`)
   .addField('Example:', `*${prefix}vol 3* or *${prefix}volume 3*`);
 
   if(!args[0])return message.channel.send(volEmbed);
@@ -1066,29 +1081,25 @@ else if (cmd === `${prefix}pa` || cmd === `${prefix}pause`) {
 }
 //radio commands
 else if(cmd === `${prefix}radio`){
+    const radioStation = args.slice(0).join(' ');
   let radioInfo = new Discord.RichEmbed()
   .setTitle(`~INVALID USAGE~`)
   .addField(`Correct Formatting:`, `${prefix}radio <station or genre>`)
   .addField(`Example`, `${prefix}radio JAM'N`)
   .addField(`Can't Find the right Station or genre?:`, `Go Here https://www.iheart.com/ to search what you want, make sure its in the playlist filter. when you find it come back to me and tell me what you want.`);
-  if(!args[0])return message.channel.send(radioInfo);
-  message.channel.send(`Searching on IHeart radio's playlist for ${args[0]}`);
+  if(!radioStation)return message.channel.send(radioInfo);
+  message.channel.send(`Searching on IHeart radio's playlist for ${radioStation}`);
   const voiceChannel = message.member.voiceChannel;
     var connection = await voiceChannel.join();
-    // search for a station, pick the first match
-    const matches = await iheart.search(args[0]);
+    const matches = await iheart.search(radioStation);
     const station = matches.stations[0];
-
-    // finally you can get the source stream URL which can
-    // be requested over HTTP and fed into an audio decoder,
-    // or whatever your application does with it…
     const url = await iheart.streamURL(station);
      const dispatcher = connection.playStream(url);
     console.log(url);
     //message.channel.send(`Now playing ${args[0]}`);
     message.channel.send(`Found a match.`);
     let radioEmbed = new Discord.RichEmbed()
-    .setTitle(`Now Playing: ${args[0]}`)
+    .setTitle(`Now Playing: ${radioStation}`)
     .addField(`Not the one you want?:`, `Go Here https://www.iheart.com/ to search what you want, make sure its in the playlist filter. when you find it come back to me and tell me what you want.`)
     .setFooter(`Requested by ${message.author.username}`);
     message.channel.send(radioEmbed);
@@ -1158,7 +1169,7 @@ else if(cmd === `${prefix}radio`){
  		.on('error', error => console.error(error));
      setTimeout(function(){
  	dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
- 	serverQueue.textChannel.send(`Found a match!!!!\n🎶 Start playing: **${song.title}**`);
+ 	serverQueue.textChannel.send(`🎶 Start playing: **${song.title}**`);
  }, 500);
 }
 bot.login(botconfig.discord_token);
