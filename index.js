@@ -39,10 +39,11 @@ fs.readdir("./commands/", (err, files) => {
     console.log("Couldn't find commands.");
     return;
   }
-
+  console.log(`|-------------------------------------------|`);
   jsfile.forEach((f, i) =>{
     let props = require(`./commands/${f}`);
-    console.log(`${f} loaded!`);
+    console.log(`|${f} loaded!`);
+    console.log(`|-------------------------------------------|`);
     bot.commands.set(props.help.name, props);
   });
 
@@ -50,7 +51,7 @@ fs.readdir("./commands/", (err, files) => {
 //when it runs and it was successful, it will run this
 bot.on("ready", async () =>{
     let prefix = botconfig.prefix;
-    let status = "";
+    let status = "";//update, updating, fixing, new, 
     let command = "";
     let functions = "";
     
@@ -59,41 +60,41 @@ bot.on("ready", async () =>{
         if(command === ""){
             console.log(`|Function: ${functions}`);
             console.log(`|-------------------------------------------|`);
-            bot.user.setActivity(`Panda Bot has gotten a update. The update is ${functions}.`);
+            bot.user.setActivity(`Panda Bot has gotten a update. The update is ${functions}.`, {type: "WATCHING"});
             bot.user.setStatus('online');
         }
         else if(functions === ""){
             console.log(`|Command: ${command}`);
             console.log(`|-------------------------------------------|`);
-            bot.user.setActivity(`Panda Bot has gotten a update. The update is ${prefix}${commands}`);
+            bot.user.setActivity(`Panda Bot has gotten a update. The update is ${prefix}${commands}`, {type: "WATCHING"});
             bot.user.setStatus("online");
         }
         else if(functions === "" && command === ""){
             console.log("|");
             console.log(`|-------------------------------------------|`);
-            bot.user.setActivity(`Panda Bot has gotten a update.`);
+            bot.user.setActivity(`Panda Bot has gotten a update.`, {type: "WATCHING"});
             bot.user.setStatus("online");
         }
         else{
             console.log(`|Command: ${command}`);
             console.log(`|Function: ${functions}`);
             console.log(`|-------------------------------------------|`);
-            bot.user.setActivity(`Panda Bot has gotten a update. The update is ${prefix}${commands}, and ${functions}`);
+            bot.user.setActivity(`Panda Bot has gotten a update. The update is ${prefix}${commands}, and ${functions}`, {type: "WATCHING"});
             bot.user.setStatus("online");
         }
     }
     else if(status === "updating"){
         console.log(`|-------------------------------------------|`);
-        console.log(`Being worked on: True`);
+        console.log(`|Being worked on: True`);
         console.log(`|-------------------------------------------|`);
-        bot.user.setActivity(`Panda Bot is being worked on. please wait till you don't see this message.`);
+        bot.user.setActivity(`Panda Bot is being worked on. please wait till you don't see this message.`, {type: "WATCHING"});
         bot.user.setStatus("dnd");
     }
     else if(status === "Fixing"){
         console.log(`|-------------------------------------------|`);
-        console.log(`Being worked on: True`);
+        console.log(`|Being worked on: True`);
         console.log(`|-------------------------------------------|`);
-        bot.user.setActivity(`Panda Bot is being worked on. please wait till you don't see this message.`);
+        bot.user.setActivity(`Panda Bot is being worked on. please wait till you don't see this message.`, {type: "WATCHING"});
         bot.user.setStatus("dnd");
     }
     else if(status === "new"){
@@ -101,20 +102,20 @@ bot.on("ready", async () =>{
         if(command === ""){
             console.log(`|Function: ${functions}`);
             console.log(`|-------------------------------------------|`);
-            bot.user.setActivity(`Panda Bot has gotten a new Function. Which is ${functions}.`);
+            bot.user.setActivity(`Panda Bot has gotten a new Function. Which is ${functions}.`, {type: "WATCHING"});
             bot.user.setStatus('online');
         }
         else if(functions === ""){
             console.log(`|Command: ${command}`);
             console.log(`|-------------------------------------------|`);
-            bot.user.setActivity(`Panda Bot has gotten a new command. The new command is ${prefix}${commands}`);
+            bot.user.setActivity(`Panda Bot has gotten a new command. The new command is ${prefix}${commands}`, {type: "WATCHING"});
             bot.user.setStatus("online");
         }
         else{
             console.log(`|Command: ${command}`);
             console.log(`|Function: ${functions}`);
             console.log(`|-------------------------------------------|`);
-            bot.user.setActivity(`Panda Bot has gotten a new command. The new command is ${prefix}${commands}, and a new function which is ${functions}`);
+            bot.user.setActivity(`Panda Bot has gotten a new command. The new command is ${prefix}${commands}, and a new function which is ${functions}`, {type: "WATCHING"});
             bot.user.setStatus("online");
     }
 
@@ -127,6 +128,7 @@ bot.on("ready", async () =>{
         bot.user.setStatus("online");
     }
     console.log(`Panda bot is in ${bot.guilds.size} servers, ${bot.channels.size} channels, and ${bot.users.size} users.`);
+    
 });
 /*=================
 [Importing Modules]
