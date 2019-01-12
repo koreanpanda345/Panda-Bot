@@ -1,7 +1,7 @@
 //will catch any error that will occur during its run
  process.on('unhandledRejection', console.error);
  //required files and information
-const botconfig = require("C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/Main Bot file/settings.json");
+const botconfig = require("../pandabot/Main Bot file/settings.json");
 const Discord = require('discord.js');
 const { Client, Util} = require('discord.js');
 const bot = new Client({disableEveryone: true});
