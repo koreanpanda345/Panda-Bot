@@ -8,7 +8,7 @@ let question = args.slice(0).join(" ");
 let ballembed = new Discord.RichEmbed()
 .setAuthor(message.author.tag)
 .setColor(0x43f47a)
-.addField("Quesion", question)
+.addField("Question", question)
 .addField("Answer", replies[result]);
 console.log(`${message.author.username} with ID:${message.author.id} has asked ${question} and the anwser was ${replies[result]}`);
 message.channel.send(ballembed);

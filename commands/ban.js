@@ -24,6 +24,7 @@ module.exports.run = async(bot, message, args) =>{
   banChannel.send(banEmbed);
   console.log(`${message.author.username} with ID: ${message.author.id} has banned: ${bUser} with ID:${bUser.id} at ${message.createdAt}`);
       return;
+      
 }
 module.exports.help = {
   name:"ban"

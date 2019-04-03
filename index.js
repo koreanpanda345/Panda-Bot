@@ -1,12 +1,15 @@
 //will catch any error that will occur during its run
- process.on('unhandledRejection', console.error);
+process.on('unhandledRejection', console.error);
  //required files and information
 const botconfig = require("../pandabot/Main Bot file/settings.json");
 const Discord = require('discord.js');
 const { Client, Util} = require('discord.js');
 const bot = new Client({disableEveryone: true});
 const fs = require("fs");
+const DBL = require("dblapi.js");
+const dbl = new DBL('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQ2NTYwOTA2Mzg3OTY3MTgwOCIsImJvdCI6dHJ1ZSwiaWF0IjoxNTQ3MzM0NDc4fQ.q7GjAQMuEAAhJAY6xWAyrhC4uTE-Q5OOUdJnqB7nE9c', bot);
 const ytdl = require("ytdl-core");
+const translate = require("translate-google");
 const ms = require("ms");
 const YouTube = require('simple-youtube-api');
 const iheart = require('iheart');
@@ -14,7 +17,13 @@ const superagent = require("superagent");
 const send = require("quick.hook");
 const youtube = new YouTube(botconfig.yt_api_key);
 const Evaluator = require("poker-evaluator");
+var Stopwatch = require('stopwatch-emitter').Stopwatch;
+var now = require('date-now');
+format = require('date-format-lite');
 const queue = new Map();
+
+let updates = JSON.parse(fs.readFileSync('C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json_files/updates.json', 'utf8'));
+
 //AIzaSyBCIK1r0YuHUJD3905yNBF8FQlQlYgfxAo
 //when it disconnects will first given a warning
 bot.on('warn', console.warn);
@@ -50,12 +59,91 @@ fs.readdir("./commands/", (err, files) => {
 });
 //when it runs and it was successful, it will run this
 bot.on("ready", async () =>{
+    var now2 = new Date();
+ 
     let prefix = botconfig.prefix;
-    let status = "";//update, updating, fixing, new, 
+    let status = "";//update, updating, fixing, new, issue, update date
+    let updateDate = "";
     let command = "";
     let functions = "";
+    let issue = "I am sorry for Panda Bot not being online last night, My computer somehow turned itself off, and this is a big no no, but good news is that there was no major issues that has occur.";
+    let desc = "";
+    let date = now2.date("YYYY-MM-DD");
+    console.log(date);
+    var time =  now2.format('hh:mm');
+    console.log(time);
+    let logs = "";//yes, update
+    let Month = "March"; 
+    if(command === "Nan"){
+        command = "No update";
+    }
+    if(functions === "Nan"){
+        functions = "No update";
+    }
+    if(issue === "Nan"){
+        issue = "No Issues"
+    }
+    if(desc === "Nan"){
+        desc = "none";
+    }
+    if(updateDate === "Nan"){
+        updateDate = "no date";
+    }
+
+    if(logs === "log"){
+        if(!updates[date]) updates[date] ={
+            date: date,
+            time: time,
+            status: status,
+            command:command,
+            functions: functions,
+            issue: issue,
+            desc: desc,
+            updateDate: updateDate
+        }
+
+    fs.writeFile('C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json_files/updates.json', JSON.stringify(updates), (err) =>{
+        if(err) return console.log(err);
+    });
+    for (var key in updates) {
+
+        console.log(key);
+        console.log(updates[key]);
+      }
     
-    if(status === "update"){
+}   
+    if(status === "update date"){
+        console.log(`|-------------------------------------------|`);
+        if(updateDate === ""){
+            console.log("|");
+            console.log(`|-------------------------------------------|`);
+            bot.user.setActivity(`Planning on a update date, Stay tune to when it happens.`, {type: "WATCHING"});
+            bot.user.setStatus("online");
+
+        }
+        else{
+            console.log(`|update date: ${updateDate}`);
+            console.log(`|-------------------------------------------|`);
+            bot.user.setActivity(`on ${updateDate}, I will be getting a update.`, {type: "WATCHING"});
+            bot.user.setStatus('dnd');
+        }
+    }
+    else if(status === "issue"){
+        console.log(`|-------------------------------------------|`);
+        if( issue === ""){
+            console.log("|");
+            console.log(`|-------------------------------------------|`);
+            bot.user.setActivity(`Theres an issue that occured. Being Fixed, please wait.`, {type: "WATCHING"});
+            bot.user.setStatus("dnd");
+        }
+        else{
+            console.log(`|Issue: ${issue}`);
+            console.log(`|-------------------------------------------|`);
+            bot.user.setActivity(`${issue}.Please wait`, {type: "WATCHING"});
+            bot.user.setStatus('dnd');
+        }
+    }
+    else if(status === "update"){
         console.log(`|-------------------------------------------|`);
         if(command === ""){
             console.log(`|Function: ${functions}`);
@@ -79,7 +167,7 @@ bot.on("ready", async () =>{
             console.log(`|Command: ${command}`);
             console.log(`|Function: ${functions}`);
             console.log(`|-------------------------------------------|`);
-            bot.user.setActivity(`Panda Bot has gotten a update. The update is ${prefix}${commands}, and ${functions}`, {type: "WATCHING"});
+            bot.user.setActivity(`Panda Bot has gotten a update. The update is ${prefix}${command}, and ${functions}`, {type: "WATCHING"});
             bot.user.setStatus("online");
         }
     }
@@ -104,18 +192,19 @@ bot.on("ready", async () =>{
             console.log(`|-------------------------------------------|`);
             bot.user.setActivity(`Panda Bot has gotten a new Function. Which is ${functions}.`, {type: "WATCHING"});
             bot.user.setStatus('online');
+            
         }
         else if(functions === ""){
             console.log(`|Command: ${command}`);
             console.log(`|-------------------------------------------|`);
-            bot.user.setActivity(`Panda Bot has gotten a new command. The new command is ${prefix}${commands}`, {type: "WATCHING"});
+            bot.user.setActivity(`Panda Bot has gotten a new command. The new command is ${prefix}${command}`, {type: "WATCHING"});
             bot.user.setStatus("online");
         }
         else{
             console.log(`|Command: ${command}`);
             console.log(`|Function: ${functions}`);
             console.log(`|-------------------------------------------|`);
-            bot.user.setActivity(`Panda Bot has gotten a new command. The new command is ${prefix}${commands}, and a new function which is ${functions}`, {type: "WATCHING"});
+            bot.user.setActivity(`Panda Bot has gotten a new command. The new command is ${prefix}${command}, and a new function which is ${functions}`, {type: "WATCHING"});
             bot.user.setStatus("online");
     }
 
@@ -128,7 +217,12 @@ bot.on("ready", async () =>{
         bot.user.setStatus("online");
     }
     console.log(`Panda bot is in ${bot.guilds.size} servers, ${bot.channels.size} channels, and ${bot.users.size} users.`);
-    
+    const guildMemberCount = bot.guilds.map(g => g.memberCount).join('\n');
+    const guildNames = bot.guilds.map(g => g.name).join("\n");
+    console.log("Guilds:");
+    console.log(`${guildNames}`);
+    //console.log(`${guildMemberCount}`);
+
 });
 /*=================
 [Importing Modules]
@@ -243,18 +337,36 @@ function isTurn(user) {
 //let coins = require("C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json_files/coins.json");
 //ttt player list
 //let playing = require('C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json_files/player.json');
-
+let langGuildFile = require('C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json_files/langGuild.json')
+const langGuild = JSON.parse(fs.readFileSync('C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json_files/langGuild.json', 'utf8'))
+let languageFile = 'C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json_files/language.json';
+const language = JSON.parse(fs.readFileSync('C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json_files/language.json', 'utf8'));
 //this is where the commands that can't be in a separate files are.
 bot.on("message", async message =>{
   if(message.author.bot) return;
   if(message.channel.type === "dm") return;
-
   let prefix = "panda!";
+  /*if (!message.content.toLowerCase().includes(prefix)) return;
+  else {
+      const args = message.content.slice(prefix.length).trim().split(/ +/g);
+      const command = args.shift().toLowerCase();
+
+      const cmd = bot.commands.get(command);
+
+      if (!cmd) return;
+
+      cmd.run(bot, message, args);
+  }*/
+  if(message.content.toLowerCase().includes(prefix)){
   let messageArray = message.content.split(" ");
   let cmd = messageArray[0];
     let args = messageArray.slice(1);
     let commandfile = bot.commands.get(cmd.slice(prefix.length));
-    if(commandfile) commandfile.run(bot,message,args);
+  if(commandfile) commandfile.run(bot,message,args);
+  console.log(`${message.guild.name} - ${message.content.split(" ")}`);
+
+  
+  
     var userId = `<@${message.author.id}>`;
     var userName = message.author.username;
     if (message.channel.type === "text") {
@@ -872,6 +984,40 @@ bot.on("message", async message =>{
 
      message.channel.send(sEmbed);
      }
+     //update log command
+     if(cmd === `${prefix}ulogs`){
+     let updates = JSON.parse(fs.readFileSync('C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json_files/updates.json', 'utf8'));
+let wantedDate = args[0];
+let logsEmbed = new Discord.RichEmbed()
+.setTitle('Updates Logs');
+
+for (var key in updates) {
+    console.log(key);
+    console.log(updates[key]);
+    logsEmbed.addField("Date", updates[key].date);
+}
+    if(!wantedDate){
+   
+
+
+return message.channel.send(logsEmbed);
+}
+
+ if(!(wantedDate === updates[wantedDate].date)) return message.channel.send('There was no log for that day');
+   console.log(updates[wantedDate].date);
+   console.log(updates[wantedDate].desc)
+    let UpdateLogEmbed = new Discord.RichEmbed()
+    .setTitle(`Logs for ${updates[wantedDate].date}`)
+    .setDescription(`Description: ${updates[wantedDate].desc}`)
+    .addField("Update Date: ", `${updates[wantedDate].updateDate}`)
+    .addField("Commands:", `${updates[wantedDate].command}`, true)
+    .addField('Functions', `${updates[wantedDate].functions}`, true)
+    .addField('Issues', `${updates[wantedDate].issue}`)
+    .setFooter(`Time the log was created: ${updates[wantedDate].time}`);
+    message.channel.send(UpdateLogEmbed);
+     }
+
+     
 // ping commands
 //will allow the user to check the ping
 if(cmd === `${prefix}ping`){
@@ -880,7 +1026,11 @@ if(cmd === `${prefix}ping`){
 //vote command
 //this gives the user a link to vote for this bot.
 if(cmd === `${prefix}vote`){
-    return message.channel.send("you would like to vote for me 😱. thats so sweet of you. here you can vote for me here: https://discordbots.org/bot/465609063879671808")
+    dbl.hasVoted(message.author.id).then(voted =>{
+        if(voted) console.log(`${message.author.id} has voted for the bot!`);
+        if(!voted) return message.channel.send("you need to vote first");
+    })
+
   }
 
 //rection commands
@@ -892,12 +1042,26 @@ if(cmd ===`${prefix}hug`){
   if(!hUser) return message.channel.send("Please enter a vaild user");
 
   let hugEmbed = new Discord.RichEmbed()
-  .setDescription(`${message.author} hugs ${hUser} ^///////^`)
+  .setDescription(`${message.author} hugs ${hUser} ^\/\/\/\/\/\/\/^`)
   .setColor("ff9900")
   .setImage(body.url);
 
   message.channel.send(hugEmbed);
 }
+
+if(cmd === `${prefix}feed`){
+  let {body} = await superagent.get(`https://nekos.life/api/v2/img/feed`);
+  let feedUser = message.guild.member(message.mentions.user.first()||message.guild.member.get(args[0]));
+  if(!feedUser) return message.channel.send("Please enter a vaild user.");
+
+  let feedEmbed = new Discord.RichEmbed()
+  .setDescription(`${message.author} feeds ${feedUser}`)
+  .setColor("ff9900")
+  .setImage(body.url);
+
+  message.channel.send(feedEmbed);
+}
+
 
 //kiss command
 if(cmd === `${prefix}kiss`){
@@ -966,6 +1130,11 @@ if(cmd === `${prefix}slap`){
 
   message.channel.send(slapEmbed);
 }
+
+//server help command
+if(cmd === `${prefix}support`){
+    message.channel.send(`IF you need help or want to suggest something or report a bug that is bugging you crazy, cause I been a bad panda, you can go here and talk to creator.\nhttps://discord.gg/RzU77Cf`)
+}
 //music commands
 //will let the user play music in th voice channel, and have control
 var guild = {};
@@ -993,12 +1162,13 @@ if(cmd === `${prefix}p` || cmd === `${prefix}play`){
   }
   message.channel.send(`Searching for ${searchString} on Youtube.`);
   if(url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)){
-    const playlist = await youtube.getPlaylist(url);
-    return console.log(playlist);
+    const playlist = await youtube.getPlaylist(url)
+    .then(console.log(playlist))
+    .catch(console.error);
     const videos = await playlist.getVideo();
     for(const video of Object.values(videos)){
-      const video2 = await youtube.getVideoByID(video.id);
-      await handleVideo(video2. message, voiceChannel, true);
+      const video2 = await youtube.getVideoByID(video.id)
+      await handleVideo(video2, message, voiceChannel, true);
     }
     return message.channel.send(`✅ Playlist: **${playlist.title}** has been added to the queue!`);
   } else {
@@ -1045,7 +1215,7 @@ if(cmd === `${prefix}p` || cmd === `${prefix}play`){
   let index = 0;
   let queueEmbed = new Discord.RichEmbed()
   .setTitle(`Playing ${serverQueue.songs[0].title}`)
-  .addField(`**Queuing**:`, serverQueue.songs.map(song => `**${++index} -** ${song.title}`).join('\n'));
+  .addField(`**Queuing**:`, serverQueue.songs.map(song => `**${++index} -** ***${song.title}*** - **${song.durationh}** hours: **${song.durationm}** minutes: **${song.durations}** seconds`).join('\n'));
   message.channel.send(queueEmbed);
 }
 else if (cmd === `${prefix}remove` || cmd === `${prefix}r`){
@@ -1112,6 +1282,77 @@ else if(cmd === `${prefix}radio`){
       message.member.voiceChannel.leave();
       message.channel.send('successful left the voice channel.')
   }
+  /*
+  if (cmd === `${prefix}folder`) {
+    //  if(!args[0]) return message.channel.send(`Invalid input pls use ${prefix}folder for more help.`)
+  //    if(`${args[0]}` == 'folder') {
+      const trackPush = new Map();
+  let bicon = bot.user.displayAvatarURL;
+  const embed = new Discord.RichEmbed()
+       .setAuthor(`${bot.user.username} folder`, bicon)
+       .setThumbnail(bicon)
+       .setColor(`GREEN`)
+    message.member.voiceChannel.join().then(connection => {
+        let track = {
+            file:['C:/Users/korea/Passion/Passions_-_01_Track_1.mp3', 'C:/Users/korea/Passion/Passions_-_10_Track_10.mp3']
+        }
+        console.log('successful');
+        var trackQueue = {
+            tracks: [],
+            volume: 5,
+            playing: true
+        };
+        console.log('successful');
+        trackPush.set(message.guild.id, trackQueue);
+            trackQueue.tracks.push(track);
+            console.log('successful');
+            console.log(trackQueue.tracks);
+            try{
+                trackQueue.connection = connection;
+                playTrack(message.guild.id, trackQueue.tracks[0]);
+            } catch (error){
+                trackPush.delete(message.guild.id);
+            }
+  console.log('successful');
+    var voiceChannel = message.member.voiceChannel;
+  if (!voiceChannel) return message.channel.send('You need to be in voice channel first!');
+  var permissions = voiceChannel.permissionsFor(message.bot.user);
+  if (!permissions.has('CONNECT')) {
+  const errorconnect = new Discord.RichEmbed()
+        .setColor(`RED`)
+  .setFooter(`This message will be deleted in 10 seconds..`)
+  .setDescription(`I couldn't connect into your voice channel, Missing **CONNECT** Permission.`)
+  return message.channel.send(errorconnect).then(message => {
+    message.delete(10000)
+  })
+  }
+  if (!permissions.has('SPEAK')) {
+  const errorspeak = new Discord.RichEmbed()
+  .setColor(`RED`)
+  .setFooter(`This message will be deleted in 10 seconds..`)
+  .setDescription(`I couldn't speak at your voice channel, Missing **SPEAK** Permission.`)
+  return message.channel.send(errorspeak).then(message => {
+    message.delete(10000)
+  })
+  }
+            let bicon = bot.user.displayAvatarURL;
+            let support = new Discord.RichEmbed()
+                .setAuthor(bot.user.username)
+                .setThumbnail(bicon)
+                .setColor('RANDOM')
+                .setTitle(':notes:**Playing Folder**')
+                .addField('Developer Own Music','Passions')
+                .setTimestamp()
+                .setFooter(`Requested by ${message.author.tag}`);
+            message.channel.send(support);
+            message.channel.send('successful');
+    })
+  
+    .catch(() => {
+  
+    });
+  }*/
+}
  });
  async function handleVideo(video, message, voiceChannel, playlist = false) {
  	const serverQueue = queue.get(message.guild.id);
@@ -1119,7 +1360,11 @@ else if(cmd === `${prefix}radio`){
  	const song = {
  		id: video.id,
  		title: Util.escapeMarkdown(video.title),
- 		url: `https://www.youtube.com/watch?v=${video.id}`
+         url: `https://www.youtube.com/watch?v=${video.id}`,
+         channel: video.channel.title,
+         durationm: video.duration.minutes,
+         durations: video.duration.seconds,
+         durationh: video.duration.hours
  	};
  	if (!serverQueue) {
  		const queueConstruct = {
@@ -1145,14 +1390,47 @@ else if(cmd === `${prefix}radio`){
  		}
  	} else {
  		serverQueue.songs.push(song);
- 		console.log(serverQueue.songs);
- 		if (playlist) return undefined;
- 		else return message.channel.send(`✅ **${song.title}** has been added to the queue!`);
+         console.log(serverQueue.songs);
+         let songAddedEmbed = new Discord.RichEmbed()
+         .setTitle(`${song.title} has been added to the queue`)
+         .setColor(`0xff3262`)
+         .addField(`Publisher: `, `${song.channel}`, true)
+         .addField('Video ID: ', song.id, true)
+         .addField(`Duration: `, `**${song.durationh}** hours: **${song.durationm}** minutes: **${song.durations}** seconds`)
+         .setThumbnail(`https://i.ytimg.com/vi/${song.id}/sddefault.jpg`)
+         .setDescription(`[${song.title}](https://www.youtube.com/watch?v=${song.id}})`)
+         if (playlist) return undefined;
+  
+ 		else return message.channel.send(songAddedEmbed);
  	}
  	return undefined;
  }
+ function playTrack(guild, track){
+     const trackQueue = trackPush.get(guild.id);
+     console.log(trackQueue.tracks);
+     if(!track){
+        trackQueue.voiceChannel.leave();
+        queue.delete(guild.id);
+        return;
+    }
+    console.log(trackQueue.tracks);
+    const dispatcher = trackQueue.connection.playFile(track)
+    .on('end', reason =>{
+        console.log(reason);
+        console.log(trackQueue.tracks[0])
+        trackQueue.tracks.shift();
+        playTrack(guild, trackQueue.tracks[0]);
+        console.log(trackQueue.tracks[0]);
+    })
+    .on('error', error => console.error(error));
+    setTimeout(function(){
+    dispatcher.setVolumeLogarithmic(serverQueue.volume / 5)
+    trackQueue.textChannel.send('successful');
+}, 500);
+}
+
  function play(guild, song) {
- 	const serverQueue = queue.get(guild.id);
+     const serverQueue = queue.get(guild.id);
 
  	if (!song) {
  		serverQueue.voiceChannel.leave();
@@ -1161,7 +1439,7 @@ else if(cmd === `${prefix}radio`){
  	}
  	console.log(serverQueue.songs);
 
- 	const dispatcher = serverQueue.connection.playStream(ytdl(song.url))
+     const dispatcher = serverQueue.connection.playStream(ytdl(song.url))
  		.on('end', reason => {
  			if (reason === 'Stream is not generating quickly enough.') console.log('Song ended.');
  			else console.log(reason);
@@ -1170,8 +1448,19 @@ else if(cmd === `${prefix}radio`){
  		})
  		.on('error', error => console.error(error));
      setTimeout(function(){
- 	dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
- 	serverQueue.textChannel.send(`🎶 Start playing: **${song.title}**`);
+         let durationTime = (((song.durationh / 60) + (song.durationm)) / 60) + song.durations
+         var stopwatch = new Stopwatch(durationTime);
+         stopwatch.getRemainingTime();
+     dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
+     let songEmbed = new Discord.RichEmbed()
+     .setColor(`0xff3262`)
+     .addField(`Publisher: `, `${song.channel}`, true)
+     .addField('Video ID: ', song.id, true)
+     .addField(`Duration: `, `**${song.durationh}** hours: **${song.durationm}** minutes: **${song.durations}** seconds`)
+     .setThumbnail(`https://i.ytimg.com/vi/${song.id}/sddefault.jpg`)
+     .setDescription(`[${song.title}](https://www.youtube.com/watch?v=${song.id}})`)
+    
+ 	serverQueue.textChannel.send(songEmbed);
  }, 500);
 }
 bot.login(botconfig.discord_token);
