@@ -6,42 +6,47 @@ let marry = JSON.parse(fs.readFileSync("C:/Users/korea/source/repos/ConsoleAppli
 module.exports.run = (client, message, args, tools) => {
 let target = message.guild.member(message.mentions.users.first()) || message.guild.members.get(args[0]);
 if(!target) return message.channel.send('Who did you want to propose to?');
+if(target.id === message.author.id) return message.channel.send('I am sorry but you can\'t marry yourself.')
 let proposer = message.author.id;
+let proposerName = message.author.username;
+
 let embed = new Discord.RichEmbed()
-.setTitle(`OwO <@${target.id}>, <@${message.author.id}> is proposing to you, would you like to accept?`)
-.setDescription('click the check to say yes, click the x to say no.');
-message.channel.send(embed).then(msg =>{
-    msg.react('💍').then(r =>{
-        msg.react('❌')
+.setTitle(`OwO <@${target.id}>, <@${message.author.id}> is proposing to you, would you like to accept?`);
+message.channel.send(embed);
+const filter = m => m.author.id === target.id;
+message.channel.awaitMessage(filter, {max: 1, time: 10000}).then(collected => {
+if(collected.first.content === "yes"){
+    embed.setTitle(`OwO <@${target.id}> and <@${proposer}> are now married`)
+    message.edit(embed);
+    if(!marry[proposer]) marry[proposer] = {
+        marry: `${target.username}`
+    } 
+    marry[proposer] = {
+        marry: `${target.username}`
+    }
+    fs.write(marryFile, JSON.stringify(marry), (err) => {
+        if(err) console.log(err);
+    });
+    if(!marry[target.id]) marry[target.id] = {
+        marry: `${proposerName}` 
+    }
 
-        //Filters
-        const marryFilter = (reaction, user) => reaction.emoji.name === '💍' && user.id === target.id;
-        const denyFilter = (reaction, user) => reaction.emoji.name === '❌' && user.id === target.id;
-
-        const marry = msg.createReactionCollector(marryFilter, {time: 6000});
-        const deny = msg.createReactionCollector(denyFilter, {time: 6000});
-
-        marry.on('collect', r => {
-            if(!marry[target.id]) marry[target.id] = {
-                marry: proposer
-            } 
-            fs.writeFile(marryFile, JSON.stringify(marry), (err) => {
-                if(err) console.log(err)
-            });
-            
-            if(!marry[proposer]) marry[proposer] = {
-                marry: target.id
-            }
-            fs.writeFile(marryFile, JSON.stringify(marry), (err) => {
-                if(err) console.log(err)
-            });
-            message.channel.send(`<@${proposer}> & <@${target.id}> are now married ^\/\/\/\/\/\/^`);
-        })
-        deny.on('collect', r => {
-            message.channel.send(`Sorry, but <@${target.id}> said no. T-T my ship has been ruined`);
-        })
-    })
+    marry[target.id] = {
+        marry: `${proposerName}` 
+    }
+    fs.write(marryFile, JSON.stringify(marry), (err) => {
+        if(err) console.log(err);
+    });
+}
+if(collected.first.content === "no"){
+    embed.setTitle(`T^T, I am sorry <@${proposer}, but <@${target.id}> decline.`);
+    message.edit(embed);
+}
+}).catch(err => {
+    console.error(err);
+    message.channel.send("They didn't reply, try again when they are online.")
 })
+
 }
 
 module.exports.help ={

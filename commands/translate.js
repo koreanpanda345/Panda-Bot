@@ -13,7 +13,6 @@ module.exports.run = (client, message, args, tools) =>{
     .addField('Usage: ', `${prefix}translate <the language your translating from> < language you want to translate to> <what your translating>`)
     .addField('Example:', `${prefix}translate en de Hello I am Panda Bot.`)
     if(!(t || fromLang||toLang)) return message.channel.send(TransInfoEmbed);
-
   translate(`${t}`, {from: `${fromLang}`, to: `${toLang}`}).then(res => {
       console.log(res)
       let TransEmbed = new Discord.RichEmbed()

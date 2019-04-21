@@ -21,7 +21,8 @@ var Stopwatch = require('stopwatch-emitter').Stopwatch;
 var now = require('date-now');
 format = require('date-format-lite');
 const queue = new Map();
-
+let langFile = "C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json_files/language.json";
+let lang = JSON.parse(fs.readFileSync(langFile, "utf8"));
 let updates = JSON.parse(fs.readFileSync('C:/Users/korea/source/repos/ConsoleApplication1/discord/pandabot/json_files/updates.json', 'utf8'));
 
 //AIzaSyBCIK1r0YuHUJD3905yNBF8FQlQlYgfxAo
@@ -62,33 +63,17 @@ bot.on("ready", async () =>{
     var now2 = new Date();
  
     let prefix = botconfig.prefix;
-    let status = "";//update, updating, fixing, new, issue, update date
-    let updateDate = "";
-    let command = "";
-    let functions = "";
-    let issue = "I am sorry for Panda Bot not being online last night, My computer somehow turned itself off, and this is a big no no, but good news is that there was no major issues that has occur.";
-    let desc = "";
+    let status = "new";//update, updating, fixing, new, issue, update date
+    let updateDate = "Nan";
+    let command = "Nan";
+    let functions = "a personal translator";
+    let issue = "Nan";
+    let desc = "Now panda bot can translate what you say to english. now you don't need to go through google translate or buy the expensive translator bot, this will do it for you for free.";
     let date = now2.date("YYYY-MM-DD");
     console.log(date);
     var time =  now2.format('hh:mm');
     console.log(time);
     let logs = "";//yes, update
-    let Month = "March"; 
-    if(command === "Nan"){
-        command = "No update";
-    }
-    if(functions === "Nan"){
-        functions = "No update";
-    }
-    if(issue === "Nan"){
-        issue = "No Issues"
-    }
-    if(desc === "Nan"){
-        desc = "none";
-    }
-    if(updateDate === "Nan"){
-        updateDate = "no date";
-    }
 
     if(logs === "log"){
         if(!updates[date]) updates[date] ={
@@ -346,6 +331,22 @@ bot.on("message", async message =>{
   if(message.author.bot) return;
   if(message.channel.type === "dm") return;
   let prefix = "panda!";
+  if(lang[message.author.id]){
+    if(lang[message.author.id].enable === "true"){
+        if(!message.content.startsWith("panda!")){
+            let msg = message.content.split(" ");
+        translate(`${msg}`, {from: `${lang[message.author.id].lang}`, to: `en`}).then(res => {
+            console.log(res);
+            let transEmbed = new Discord.RichEmbed()
+            .setAuthor(message.author.username)
+            .setDescription(res);
+            message.channel.send(transEmbed);
+        }).catch(err => {
+            console.error(err);
+        });
+    }
+}
+}
   /*if (!message.content.toLowerCase().includes(prefix)) return;
   else {
       const args = message.content.slice(prefix.length).trim().split(/ +/g);
@@ -1027,14 +1028,50 @@ if(cmd === `${prefix}ping`){
 //this gives the user a link to vote for this bot.
 if(cmd === `${prefix}vote`){
     dbl.hasVoted(message.author.id).then(voted =>{
-        if(voted) console.log(`${message.author.id} has voted for the bot!`);
-        if(!voted) return message.channel.send("you need to vote first");
+        if(voted){
+            message.channel.send(`you have already voted for me`)
+         console.log(`${message.author.id} has voted for the bot!`);
+        }
+        if(!voted) return message.channel.send("https://discordbots.org/bot/465609063879671808");
     })
 
   }
 
 //rection commands
-
+if(cmd === `${prefix}enable`){
+    if(!lang[message.author.id]) return;
+    let userLang = lang[message.author.id].lang;
+    lang[message.author.id] = {
+        lang: userLang,
+        enable: "true"
+    };
+    fs.writeFile(langFile, JSON.stringify(lang), (err) => {
+        if(err) console.log(err);
+    });
+    translate(`Enabling your translator.`, {from: `en`, to: `${lang[message.author.id].lang}`}).then(res => {
+        console.log(res);
+        message.channel.send(res);
+    }).catch(err => {
+        console.error(err);
+    });
+}
+if(cmd === `${prefix}disable`){
+    if(!lang[message.author.id]) return;
+    let userLang = lang[message.author.id].lang;
+    lang[message.author.id] = {
+        lang: userLang,
+        enable: "false"
+    };
+    fs.writeFile(langFile, JSON.stringify(lang), (err) => {
+        if(err) console.log(err);
+    });
+    translate(`Disabling your translator.`, {from: `en`, to: `${lang[message.author.id].lang}`}).then(res => {
+        console.log(res);
+        message.channel.send(res);
+    }).catch(err => {
+        console.error(err);
+    });
+}
 //hug command
 if(cmd ===`${prefix}hug`){
   let {body} = await superagent.get(`https://nekos.life/api/v2/img/hug`);
